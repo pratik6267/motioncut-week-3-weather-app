@@ -1,0 +1,50 @@
+python
+import requests
+import json
+
+def get_weather_data(city):
+    try:
+        api_key = "3bb2b00899e378db7967c52c11a316ee"
+        base_url = "http://api.openweathermap.org/data/2.5/weather"
+        complete_url = base_url + "?q=" + city + "&appid=" + api_key
+        response = requests.get(complete_url)
+        data = response.json()
+        if data['cod'] != '404':
+            main = data['main']
+            weather_desc = data['weather'][0]['description']
+            temperature = main['temp'] - 273.15 # Convert from Kelvin to Celsius
+            humidity = main['humidity']
+            pressure = main['pressure']
+            weather_data = {
+                'city': city,
+                'temperature': temperature,
+                'humidity': humidity,
+                'pressure': pressure,
+                'weather_desc': weather_desc,
+            }
+            return weather_data
+        else:
+            print("City not found. Please enter a valid city name.")
+    except Exception as e:
+        print("Error occurred: ", e)
+
+def display_weather_data(weather_data):
+    try:
+        if weather_data:
+            print("City: ", weather_data['city'])
+            print("Temperature: ", weather_data['temperature'], "°C")
+            print("Humidity: ", weather_data['humidity'], "%")
+            print("Pressure: ", weather_data['pressure'], "hPa")
+            print("Weather Description: ", weather_data['weather_desc'])
+        else:
+            print("No weather data available.")
+    except Exception as e:
+        print("Error occurred: ", e)
+
+def main():
+    city = input("Enter city name: ")
+    weather_data = get_weather_data(city)
+    display_weather_data(weather_data)
+
+if __name__ == "__main__":
+    main()
